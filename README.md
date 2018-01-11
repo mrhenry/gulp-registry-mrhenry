@@ -10,17 +10,40 @@ Install the registry through NPM or Yarn:
 
 Use it as your Gulp registry in your `gulpfile.js`
 
-```
+```js
 const gulp = require('gulp');
 const MrHenry = require('gulp-registry-mrhenry');
 const config = require('./gulp/config');
 
-const registry = new MrHenry(config);
+const tasks = new MrHenry(config);
 
-gulp.registry(registry);
+gulp.registry(tasks);
 ```
 
 Find an example config file in our [Gulp Starter](https://github.com/mrhenry/gulp-starter/blob/master/template/gulp/config.js) repository.
+
+## Usage
+
+Run a one-time build: `gulp`
+
+Start the watcher `gulp watch`
+
+### Adding custom tasks
+
+Extending the registry with custom tasks is easy:
+
+```js
+tasks.set('my-task', myTask());
+```
+
+You can pass two options:
+
+```js
+tasks.set('my-task', myTask(), { default: true, watch: 'glob' })
+```
+
+- `default` (default: true) - should run when `gulp` or `gulp default` is run
+- `watch` (mixed: string or array of strings) - glob (or array of globs) to watch for changes when `gulp watch` is run
 
 ## Docs
 
