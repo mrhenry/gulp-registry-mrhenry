@@ -58,7 +58,7 @@ class GulpRegistryMrHenry {
 		const defaults = { watch: false, default: true };
 		const settings = Object.assign({}, defaults, options);
 
-		if (!!settings.watch) {
+		if (settings.watch) {
 			const files = settings.watch;
 			this[WATCH_TASKS][task] = files;
 		}
@@ -67,12 +67,14 @@ class GulpRegistryMrHenry {
 			this[DEFAULT_TASKS].push(task);
 		}
 
-		return this[TASKS][task] = fn;
+		this[TASKS][task] = fn;
+
+		return this[TASKS][task];
 	}
 
 	tasks() {
 		return Object.keys(this[TASKS]).reduce((tasks, name) => {
-			tasks[name] = this.get(name);
+			Object.assign(tasks, { [name]: this.get(name) });
 			return tasks;
 		}, {});
 	}

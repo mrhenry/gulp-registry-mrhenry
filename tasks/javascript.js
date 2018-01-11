@@ -12,7 +12,9 @@ const babili = require('gulp-babel-minify');
 const babelPresetEnv = require('babel-preset-env');
 
 module.exports = (config) => {
-	const { src, dest, bundleName, browsers } = config;
+	const {
+		src, dest, bundleName, browsers,
+	} = config;
 
 	const es6 = () => {
 		const build = () => {
@@ -40,7 +42,7 @@ module.exports = (config) => {
 				presets: [
 					[babelPresetEnv, {
 						targets: {
-							browsers: browsers,
+							browsers,
 						},
 					}],
 				],
@@ -61,4 +63,4 @@ module.exports = (config) => {
 	};
 
 	return { es6, babel };
-}
+};

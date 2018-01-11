@@ -4,8 +4,8 @@ module.exports = (config) => {
 	const { src, dest } = config;
 
 	const fonts = () => gulp
-		.src(config.src, { since: gulp.lastRun(fonts) })
-		.pipe(gulp.dest(config.dest))
+		.src(src, { since: gulp.lastRun(fonts) })
+		.pipe(gulp.dest(dest));
 
 	return fonts;
 };

@@ -6,10 +6,16 @@
   "repository": "https://github.com/mrhenry/gulp-registry-mrhenry",
   "author": "@mrhenry",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint --fix **/*.js *.js"
+  },
   "peerDependencies": {
     "gulp": "^4.0.0"
   },
   "devDependencies": {
+    "eslint": "^4.15.0",
+    "eslint-config-mrhenry": "^2.0.0",
+    "eslint-plugin-import": "^2.8.0",
     "gulp": "^4.0.0"
   },
   "dependencies": {
