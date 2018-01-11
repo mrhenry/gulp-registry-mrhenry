@@ -1,5 +1,3 @@
-const gulp = require('gulp');
-
 const css = require('./tasks/css');
 const fonts = require('./tasks/fonts');
 const icons = require('./tasks/icons');
@@ -19,25 +17,37 @@ class GulpRegistryMrHenry {
 	}
 
 	init(taker) {
-		this.set('css', css(this.config.css), { watch: this.config.css.watch });
-		this.set('fonts', fonts(this.config.fonts), { watch: this.config.fonts.src });
-		this.set('icons', icons(this.config.icons), { watch: this.config.icons.src });
-		this.set('images', images(this.config.images), { watch: this.config.images.src });
+		const {
+			css: cssConfig,
+			fonts: fontsConfig,
+			icons: iconsConfig,
+			images: imagesConfig,
+			js: jsConfig,
+		} = this.config;
 
-		const { es6, babel } = javascript(this.config.js);
+		this.set('css', css(cssConfig), { watch: cssConfig.watch || cssConfig.src });
+		this.set('fonts', fonts(fontsConfig), { watch: fontsConfig.watch || fontsConfig.src });
+		this.set('icons', icons(iconsConfig), { watch: iconsConfig.watch || iconsConfig.src });
+		this.set('images', images(imagesConfig), { watch: imagesConfig.watch || imagesConfig.src });
+
+		const { es6, babel } = javascript(jsConfig);
 		this.set('javascript:es6', es6, { default: false });
 		this.set('javascript:babel', babel, { default: false });
-		this.set('javascript', taker.parallel('javascript:es6', 'javascript:babel'), { watch: this.config.js.watch });
+		this.set('javascript', taker.parallel('javascript:es6', 'javascript:babel'), { watch: jsConfig.watch || jsConfig.src });
 
 		this.set('default', taker.parallel(...this[DEFAULT_TASKS]));
 
-		const watch = () => {
-			Object.entries(this[WATCH_TASKS]).forEach(([task, files]) => {
-				gulp.watch(files, this.get(task));
-			});
-		};
+		// The registry is consumed by a tool that supports watching
+		// (probably Gulp)
+		if (typeof taker.watch === 'function') {
+			const watch = () => {
+				Object.entries(this[WATCH_TASKS]).forEach(([task, files]) => {
+					taker.watch(files, this.get(task));
+				});
+			};
 
-		this.set('watch', taker.series('default', watch));
+			this.set('watch', taker.series('default', watch));
+		}
 	}
 
 	get(task) {
