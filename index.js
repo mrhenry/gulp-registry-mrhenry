@@ -1,4 +1,5 @@
 const css = require('./tasks/css');
+const favicons = require('./tasks/favicons');
 const fonts = require('./tasks/fonts');
 const icons = require('./tasks/icons');
 const images = require('./tasks/images');
@@ -20,20 +21,38 @@ class GulpRegistryMrHenry {
 		const {
 			css: cssConfig,
 			fonts: fontsConfig,
+			favicons: faviconsConfig,
 			icons: iconsConfig,
 			images: imagesConfig,
 			js: jsConfig,
 		} = this.config;
 
-		this.set('css', css(cssConfig), { watch: cssConfig.watch || cssConfig.src });
-		this.set('fonts', fonts(fontsConfig), { watch: fontsConfig.watch || fontsConfig.src });
-		this.set('icons', icons(iconsConfig), { watch: iconsConfig.watch || iconsConfig.src });
-		this.set('images', images(imagesConfig), { watch: imagesConfig.watch || imagesConfig.src });
+		if (cssConfig) {
+			this.set('css', css(cssConfig), { watch: cssConfig.watch || cssConfig.src });
+		}
 
-		const { es6, babel } = javascript(jsConfig);
-		this.set('javascript:es6', es6, { default: false });
-		this.set('javascript:babel', babel, { default: false });
-		this.set('javascript', taker.parallel('javascript:es6', 'javascript:babel'), { watch: jsConfig.watch || jsConfig.src });
+		if (faviconsConfig) {
+			this.set('favicons', favicons(faviconsConfig), { watch: faviconsConfig.watch || faviconsConfig.src });
+		}
+
+		if (fontsConfig) {
+			this.set('fonts', fonts(fontsConfig), { watch: fontsConfig.watch || fontsConfig.src });
+		}
+
+		if (iconsConfig) {
+			this.set('icons', icons(iconsConfig), { watch: iconsConfig.watch || iconsConfig.src });
+		}
+
+		if (imagesConfig) {
+			this.set('images', images(imagesConfig), { watch: imagesConfig.watch || imagesConfig.src });
+		}
+
+		if (jsConfig) {
+			const { es6, babel } = javascript(jsConfig);
+			this.set('javascript:es6', es6, { default: false });
+			this.set('javascript:babel', babel, { default: false });
+			this.set('javascript', taker.parallel('javascript:es6', 'javascript:babel'), { watch: jsConfig.watch || jsConfig.src });
+		}
 
 		this.set('default', taker.parallel(...this[DEFAULT_TASKS]));
 
