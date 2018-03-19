@@ -1,6 +1,6 @@
 {
   "name": "gulp-registry-mrhenry",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mr. Henry's Gulp workflow",
   "main": "index.js",
   "repository": "https://github.com/mrhenry/gulp-registry-mrhenry",
