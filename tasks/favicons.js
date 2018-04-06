@@ -50,7 +50,12 @@ const sizes = {
 };
 
 module.exports = (config) => {
-	const { src, dest, backgroundColor = '#ffffff', padding = 0.825 } = config;
+	const {
+		src: { png, svg },
+		dest,
+		backgroundColor = '#ffffff',
+		padding = 0.825,
+	} = config;
 
 	const resizers = Object.entries(sizes).map(([filename, options]) => {
 		const settings = {
@@ -75,7 +80,7 @@ module.exports = (config) => {
 		}
 
 		const task = () => gulp
-			.src(src)
+			.src(png)
 			.pipe(gm((favicon) => {
 				const { width, height, transparent } = settings;
 
@@ -102,6 +107,33 @@ module.exports = (config) => {
 		return name;
 	});
 
-	const favicons = gulp.parallel(...resizers);
-	return favicons;
+	const generateFavicons = gulp.parallel(...resizers);
+
+	if (svg) {
+		const svgoSettings = {
+			plugins: [
+				{ cleanupAttrs: true },
+				{ removeViewbox: false },
+				{ removeRasterImages: true },
+				{ removeDoctype: true },
+				{ removeComments: true },
+				{
+					cleanupNumericValues: {
+						floatPrecision: 2,
+					},
+				},
+			],
+		};
+
+		const copyPinnedTab = () => gulp
+			.src(svg)
+			.pipe(imagemin([
+				imagemin.svgo(svgoSettings),
+			]))
+			.pipe(gulp.dest(dest));
+
+		return gulp.parallel(generateFavicons, copyPinnedTab);
+	}
+
+	return generateFavicons;
 };
