@@ -32,7 +32,7 @@ class GulpRegistryMrHenry {
 		}
 
 		if (faviconsConfig) {
-			this.set('favicons', favicons(faviconsConfig), { watch: faviconsConfig.watch || faviconsConfig.src });
+			this.set('favicons', favicons(faviconsConfig), { default: false, watch: false });
 		}
 
 		if (fontsConfig) {
