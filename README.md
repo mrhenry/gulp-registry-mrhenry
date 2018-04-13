@@ -4,6 +4,10 @@ This registry holds Gulp 4 tasks for a Progressive Enhancement-based front-end w
 
 ## Installation
 
+First of all, install these third party dependencies.
+
+```brew install graphicsmagick```
+
 Install the registry through NPM or Yarn:
 
 ```yarn add gulp gulp-registry-mrhenry --dev```
