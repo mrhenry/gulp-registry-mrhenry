@@ -57,6 +57,17 @@ CSS is being transpiled some PostCSS plugins to a final single CSS files. The pr
 
 A `.min.css` version of every `.css` file in the source path also gets built (powered by `cssnano`).
 
+### Favicons
+
+Add a `favicon.png` 512×512 and a no color, single path, 16×16 `favicon.svg` to your `gulp/assets/favicons` folder and a variety of sizes for all modern devices will be generated.
+
+There are two options that you can add to `config.js`:
+
+ - `backgroundColor`: specify the background color for the non-transparent icons
+ - `padding`: the resize ratio to render some padding (a number between 0 and 1)
+
+*Having trouble running this task? Make sure `graphicsmagick` is installed on your computer.*
+
 ### Fonts
 
 Use only in case of self-hosted fonts.
