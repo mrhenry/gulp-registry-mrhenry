@@ -1,64 +1,59 @@
 const gulp = require('gulp');
 
-const browserify = require('browserify');
 const babelify = require('babelify');
-const source = require('vinyl-source-stream');
+const babelPresetEnv = require('babel-preset-env');
+const babili = require('gulp-babel-minify');
+const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
-const uglify = require('gulp-uglify');
-const rollup = require('rollup-stream');
 const resolve = require('rollup-plugin-node-resolve');
-const babili = require('gulp-babel-minify');
-const babelPresetEnv = require('babel-preset-env');
+const rollup = require('rollup-stream');
+const uglify = require('gulp-uglify');
+const tap = require('gulp-tap');
 
 module.exports = (config) => {
 	const {
-		src, dest, bundleName, browsers,
+		src, dest, browsers,
 	} = config;
 
 	const es6 = () => {
-		const build = () => {
-			const rollupSettings = {
-				input: src,
-				format: 'es',
-				plugins: [resolve()],
-			};
-
-			return rollup(rollupSettings)
-				.pipe(source(bundleName.replace('.js', '.es6.js')))
-				.pipe(buffer());
-		};
-
-		return build()
+		return gulp.src(src)
+			.pipe(tap((file) => {
+				file.contents = rollup({
+					input: file.path,
+					format: 'es',
+					plugins: [resolve({ browser: true })],
+				});
+			}))
+			.pipe(rename({ suffix: '.es6' }))
 			.pipe(gulp.dest(dest))
+			.pipe(buffer())
 			.pipe(babili())
-			.pipe(rename(bundleName.replace('.js', '.es6.min.js')))
+			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(dest));
 	};
 
 	const babel = () => {
-		const build = () => {
-			const babelSettings = {
-				presets: [
-					[babelPresetEnv, {
-						targets: {
-							browsers,
-						},
-					}],
-				],
-			};
-
-			return browserify(src, { debug: true })
-				.transform(babelify, babelSettings)
-				.bundle()
-				.pipe(source(bundleName))
-				.pipe(buffer());
+		const babelSettings = {
+			presets: [
+				[babelPresetEnv, {
+					targets: {
+						browsers,
+					},
+				}],
+			],
 		};
 
-		return build()
+		return gulp.src(src, { read: false })
+			.pipe(tap((file) => {
+				file.contents = browserify(file.path, { debug: true })
+					.transform(babelify, babelSettings)
+					.bundle();
+			}))
 			.pipe(gulp.dest(dest))
+			.pipe(buffer())
 			.pipe(uglify())
-			.pipe(rename(bundleName.replace('.js', '.min.js')))
+			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(config.dest));
 	};
 
