@@ -6,6 +6,7 @@ const babili = require('gulp-babel-minify');
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
+const commonjs = require('rollup-plugin-commonjs');
 const resolve = require('rollup-plugin-node-resolve');
 const rollup = require('rollup-stream');
 const uglify = require('gulp-uglify');
@@ -22,7 +23,10 @@ module.exports = (config) => {
 				file.contents = rollup({
 					input: file.path,
 					format: 'es',
-					plugins: [resolve({ browser: true })],
+					plugins: [
+						resolve({ browser: true }),
+						commonjs({ sourceMap: false }),
+					],
 				});
 			}))
 			.pipe(rename({ suffix: '.es6' }))
