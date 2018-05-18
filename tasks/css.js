@@ -13,7 +13,15 @@ module.exports = (config) => {
 	const processors = [
 		inlineImports({ path: src }),
 		nested(),
-		cssnext({ browsers }),
+		cssnext({
+			browsers,
+			features: {
+				autoprefixer: {
+					grid: true,
+					supports: false,
+				},
+			},
+		}),
 	];
 
 	const css = () => gulp
