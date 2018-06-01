@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 
 const postcss = require('gulp-postcss');
-const cssnano = require('cssnano');
+const cleancss = require('gulp-clean-css');
 const postcssPresetEnv = require('postcss-preset-env');
 const inlineImports = require('postcss-import');
 const nested = require('postcss-nested');
@@ -27,7 +27,7 @@ module.exports = (config) => {
 		.src(src)
 		.pipe(postcss(processors))
 		.pipe(gulp.dest(dest))
-		.pipe(postcss([cssnano()]))
+		.pipe(cleancss({ level: 2 }))
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(dest));
 
