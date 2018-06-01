@@ -56,10 +56,10 @@ tasks.set('my-task', myTask(), { default: true, watch: 'glob' })
 CSS is being transpiled some PostCSS plugins to a final single CSS files. The processors that the source files are run through are:
 
 **postcss-import** inlines all `@import` statements into a single CSS file.  
-**cssnext** provides CSS4 compliance & runs Autoprefixer. Find [the docs here](http://cssnext.io/features/).  
+**postcss-preset-env** provides CSS4 compliance & runs Autoprefixer. Find [the docs here](https://preset-env.cssdb.org/).  
 **postcss-nested** enables `&` behaviour and nested `@media`-queries much like SCSS.  
 
-A `.min.css` version of every `.css` file in the source path also gets built (powered by `cssnano`).
+A `.min.css` version of every `.css` file in the source path also gets built (powered by `clean-css`).
 
 ### Favicons
 
