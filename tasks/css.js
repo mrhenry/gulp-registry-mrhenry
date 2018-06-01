@@ -2,7 +2,7 @@ const gulp = require('gulp');
 
 const postcss = require('gulp-postcss');
 const cssnano = require('cssnano');
-const cssnext = require('postcss-cssnext');
+const postcssPresetEnv = require('postcss-preset-env');
 const inlineImports = require('postcss-import');
 const nested = require('postcss-nested');
 const rename = require('gulp-rename');
@@ -13,13 +13,12 @@ module.exports = (config) => {
 	const processors = [
 		inlineImports({ path: src }),
 		nested(),
-		cssnext({
+		postcssPresetEnv({
+			stage: 1,
 			browsers,
-			features: {
-				autoprefixer: {
-					grid: true,
-					supports: false,
-				},
+			autoprefixer: {
+				grid: true,
+				supports: false,
 			},
 		}),
 	];
