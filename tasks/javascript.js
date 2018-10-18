@@ -11,6 +11,7 @@ const resolve = require('rollup-plugin-node-resolve');
 const rollup = require('rollup-stream');
 const uglify = require('gulp-uglify');
 const tap = require('gulp-tap');
+const sourcemaps = require('gulp-sourcemaps');
 
 module.exports = (config) => {
 	const {
@@ -25,15 +26,17 @@ module.exports = (config) => {
 					format: 'es',
 					plugins: [
 						resolve({ browser: true }),
-						commonjs({ sourceMap: false }),
+						commonjs({ sourceMap: true }),
 					],
 				});
 			}))
 			.pipe(rename({ suffix: '.es6' }))
 			.pipe(gulp.dest(dest))
 			.pipe(buffer())
+			.pipe(sourcemaps.init({loadMaps: true}))
 			.pipe(babili())
 			.pipe(rename({ suffix: '.min' }))
+			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(dest));
 	};
 
@@ -56,8 +59,10 @@ module.exports = (config) => {
 			}))
 			.pipe(gulp.dest(dest))
 			.pipe(buffer())
+			.pipe(sourcemaps.init({loadMaps: true}))
 			.pipe(uglify())
 			.pipe(rename({ suffix: '.min' }))
+			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(config.dest));
 	};
 
