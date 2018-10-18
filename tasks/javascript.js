@@ -36,8 +36,7 @@ module.exports = (config) => {
 			.pipe(sourcemaps.init({loadMaps: true}))
 			.pipe(babili())
 			.pipe(rename({ suffix: '.min' }))
-			.pipe(sourcemaps.write('./
-		'))
+			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(dest));
 	};
 
