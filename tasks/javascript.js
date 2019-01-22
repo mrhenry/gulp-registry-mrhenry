@@ -1,15 +1,13 @@
 const gulp = require('gulp');
 
-const filter = require('gulp-filter');
-const minify = require("gulp-babel-minify");
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
 const babel = require('rollup-plugin-babel');
 const commonjs = require('rollup-plugin-commonjs');
 const resolve = require('rollup-plugin-node-resolve');
+const terser = require('rollup-plugin-terser').terser;
 const rollup = require('gulp-better-rollup');
-const tap = require('gulp-tap');
-const source = require('vinyl-source-stream');
+// const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
 
 module.exports = (config) => {
@@ -40,6 +38,7 @@ module.exports = (config) => {
               'node_modules/regenerator-runtime/**',
             ],
             presets: [
+
               [
                 "@babel/preset-env",
                 {
@@ -47,9 +46,11 @@ module.exports = (config) => {
                   ignoreBrowserslistConfig: true,
                   targets: targets,
                 }
-              ]
+              ],
+
             ]
           }),
+          terser(),
         ],
       }, {
         format: 'iife',
@@ -60,22 +61,6 @@ module.exports = (config) => {
     })) : step1;
 
     return step2
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(dest))
-      .pipe(filter(['!**/*.map']))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({
-        loadMaps: true
-      }))
-      .pipe(minify({
-        mangle: {
-          keepFnName: true,
-          keepClassName: true
-        }
-      }))
-      .pipe(rename({
-        suffix: '.min'
-      }))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(dest));
   };
