@@ -1,8 +1,9 @@
-interface Browser {
+import { select, Target } from "./select";
+
+export interface Browser {
   name: string;
   version?: string;
 }
-
 
 const commonVersionIdentifier = /version\/(\d+)/i;
 const blank = null;
@@ -121,4 +122,5 @@ else {
   dummy = blank;
 }
 
-export default browser!;
+const _select = (targets: Target[]) => select(targets, browser);
+export default { current: browser!, select: _select };

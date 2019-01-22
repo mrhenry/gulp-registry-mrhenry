@@ -13,95 +13,117 @@ const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
 
 module.exports = (config) => {
-	const {
-		src,
-		dest,
-		browsers,
-	} = config;
+  const {
+    src,
+    dest,
+    browsers,
+  } = config;
 
-	const pipeline = (targets, suffix) => {
-		const step1 = gulp.src(src)
-			.pipe(sourcemaps.init({
-				loadMaps: true
-			}))
-			.pipe(rollup({
-				plugins: [
-					resolve({
-						browser: true
-					}),
-					commonjs({
-						sourceMap: true
-					}),
-					babel({
-						babelrc: false,
-						exclude: [
-							'node_modules/@babel/**',
-							'node_modules/core-js/**',
-							'node_modules/regenerator-runtime/**',
-						],
-						presets: [
-							[
-								"@babel/preset-env",
-								{
-									useBuiltIns: "usage",
-									ignoreBrowserslistConfig: true,
-									targets: targets,
-								}
-							]
-						]
-					}),
-				],
-			}, {
-				format: 'iife',
-			}));
+  const pipeline = (targets, suffix) => {
+    const step1 = gulp.src(src)
+      .pipe(sourcemaps.init({
+        loadMaps: true
+      }))
+      .pipe(rollup({
+        plugins: [
+          resolve({
+            browser: true
+          }),
+          commonjs({
+            sourceMap: true
+          }),
+          babel({
+            babelrc: false,
+            exclude: [
+              'node_modules/@babel/**',
+              'node_modules/core-js/**',
+              'node_modules/regenerator-runtime/**',
+            ],
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "usage",
+                  ignoreBrowserslistConfig: true,
+                  targets: targets,
+                }
+              ]
+            ]
+          }),
+        ],
+      }, {
+        format: 'iife',
+      }));
 
-		const step2 = suffix ? step1.pipe(rename({
-			suffix: suffix
-		})) : step1;
+    const step2 = suffix ? step1.pipe(rename({
+      suffix: suffix
+    })) : step1;
 
-		return step2
-			.pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest(dest))
-			.pipe(filter(['!**/*.map']))
-			.pipe(buffer())
-			.pipe(sourcemaps.init({
-				loadMaps: true
-			}))
-			.pipe(minify({
-				mangle: {
-					keepFnName: true,
-					keepClassName: true
-				}
-			}))
-			.pipe(rename({
-				suffix: '.min'
-			}))
-			.pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest(dest));
-	};
+    return step2
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(dest))
+      .pipe(filter(['!**/*.map']))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({
+        loadMaps: true
+      }))
+      .pipe(minify({
+        mangle: {
+          keepFnName: true,
+          keepClassName: true
+        }
+      }))
+      .pipe(rename({
+        suffix: '.min'
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(dest));
+  };
 
-	const modern = () => {
-		const targets = [
-			// global coverage: 75.43% (on 21-01-2019)
-			'chrome >= 70',
-			'and_chr >= 70',
-			'ff >= 63',
-			'and_ff >= 63',
-			'safari >= 12',
-			'ios_saf >= 12',
-			'opera >= 56',
-			'Samsung >= 7',
-			'and_uc >= 11',
-		].join(', ')
-		return pipeline(targets, '.es6');
-	}
+  const modern = () => {
+    const selector = require('./targets').modern;
+    return pipeline(toBrowserList(selector), '.es6');
+  }
 
-	const legacy = () => {
-		return pipeline(browsers);
-	}
+  const legacy = () => {
+    return pipeline(browsers);
+  }
 
-	return {
-		modern,
-		legacy
-	};
+  return {
+    modern,
+    legacy
+  };
 };
+
+function toBrowserList(target) {
+  let l = [];
+
+  if (target.chrome) {
+    l.push(`chrome >= ${target.chrome}`);
+    l.push(`and_chr >= ${target.chrome}`);
+  }
+
+  if (target.ff) {
+    l.push(`ff >= ${target.ff}`);
+    l.push(`and_ff >= ${target.ff}`);
+  }
+
+  if (target.safari) {
+    l.push(`safari >= ${target.safari}`);
+    l.push(`ios_saf >= ${target.safari}`);
+  }
+
+  if (target.opera) {
+    l.push(`opera >= ${target.opera}`);
+  }
+
+  if (target.samsung) {
+    l.push(`Samsung >= ${target.samsung}`);
+  }
+
+  if (target.uc) {
+    l.push(`and_uc >= ${target.uc}`);
+  }
+
+  return l.join(', ');
+}
