@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-preset-minify": "^0.5.0",
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "typescript": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc && rollup -c rollup.config.js && babel --source-type script --no-comments --out-file ./bundle.min.js ./dist/bundle.js"
+  }
+}

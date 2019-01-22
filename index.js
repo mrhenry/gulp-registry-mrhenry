@@ -48,9 +48,9 @@ class GulpRegistryMrHenry {
 		}
 
 		if (jsConfig) {
-			const { es6, babel } = javascript(jsConfig);
-			this.set('javascript:es6', es6, { default: false });
-			this.set('javascript:babel', babel, { default: false });
+			const { modern, legacy } = javascript(jsConfig);
+			this.set('javascript:es6', modern, { default: false });
+			this.set('javascript:babel', legacy, { default: false });
 			this.set('javascript', taker.parallel('javascript:es6', 'javascript:babel'), { watch: jsConfig.watch || jsConfig.src });
 		}
 
